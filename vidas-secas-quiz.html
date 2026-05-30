@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Vidas Secas | Graciliano Ramos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&display=swap');
+
+  :root {
+    --areia:    #D4B483;
+    --bege:     #F0E2C4;
+    --ocre:     #C8813A;
+    --marrom:   #7A4F2D;
+    --marrom-escuro: #4A2E12;
+    --verde-seco: #7D8C5C;
+    --ceu:      #6B9BB8;
+    --ceu-claro:#A8C5D8;
+    --solo:     #B8936A;
+    --branco-quente: #FAF3E0;
+    --sombra:   rgba(74,46,18,0.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Crimson Text', Georgia, serif;
+    background-color: var(--bege);
+    color: var(--marrom-escuro);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SKY + LANDSCAPE BACKGROUND ── */
+  .bg-scene {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .sky {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 45%;
+    background: linear-gradient(180deg,
+      #4A7FA0 0%,
+      #6B9BB8 35%,
+      #A8C5D8 65%,
+      #D4B483 100%);
+  }
+
+  .sun {
+    position: absolute;
+    top: 6%;
+    right: 14%;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, #FFF8D0 30%, #F5C842 60%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 40px 20px rgba(245,200,66,0.3);
+    animation: pulse-sun 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-sun {
+    0%,100% { box-shadow: 0 0 40px 20px rgba(245,200,66,0.3); }
+    50%      { box-shadow: 0 0 60px 30px rgba(245,200,66,0.45); }
+  }
+
+  .ground {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60%;
+    background: linear-gradient(180deg,
+      #C8813A 0%,
+      #B8753A 15%,
+      #A06428 35%,
+      #8B5A22 60%,
+      #7A4F2D 100%);
+  }
+
+  /* Cracked soil texture using CSS */
+  .cracks {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60%;
+    opacity: 0.18;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 28px, #4A2E12 28px, #4A2E12 29px),
+      repeating-linear-gradient(90deg, transparent, transparent 38px, #4A2E12 38px, #4A2E12 39px),
+      repeating-linear-gradient(45deg, transparent, transparent 18px, #4A2E12 18px, #4A2E12 19px);
+  }
+
+  /* ── SVG PLANTS ── */
+  .plants {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 58%;
+  }
+
+  /* ── MAIN WRAPPER ── */
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px 60px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: linear-gradient(160deg, var(--branco-quente) 0%, #EDD9A3 100%);
+    border: 2px solid var(--areia);
+    border-radius: 4px;
+    max-width: 720px;
+    width: 100%;
+    padding: 48px 52px;
+    box-shadow:
+      0 4px 6px var(--sombra),
+      0 20px 60px rgba(74,46,18,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.6);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--ocre), var(--marrom), var(--ocre));
+  }
+
+  /* Decorative corner */
+  .card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,129,58,0.12), transparent 70%);
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; animation: fadeIn 0.5s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HOME SCREEN ── */
+  .home-badge {
+    display: inline-block;
+    background: var(--ocre);
+    color: var(--branco-quente);
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 3px;
+    font-size: 11px;
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .home-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--marrom-escuro);
+    margin-bottom: 8px;
+  }
+
+  .home-title em {
+    color: var(--ocre);
+    font-style: italic;
+  }
+
+  .home-author {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--marrom);
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--areia);
+  }
+
+  .home-desc {
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: var(--marrom);
+    margin-bottom: 36px;
+  }
+
+  .home-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.92rem;
+    color: var(--marrom);
+    font-style: italic;
+  }
+
+  .meta-icon {
+    width: 20px; height: 20px;
+    fill: var(--ocre);
+    flex-shrink: 0;
+  }
+
+  /* ── DECORATIVE DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    color: var(--areia);
+    font-size: 1.2rem;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--areia);
+  }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--ocre) 0%, var(--marrom) 100%);
+    color: var(--branco-quente);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 16px 36px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(74,46,18,0.3);
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(74,46,18,0.4);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--marrom);
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 28px;
+    border: 2px solid var(--areia);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--ocre);
+    color: var(--ocre);
+  }
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+
+  .question-counter {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    color: var(--marrom);
+  }
+
+  .score-badge {
+    background: var(--marrom-escuro);
+    color: var(--areia);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 2px;
+  }
+
+  /* Progress Bar */
+  .progress-wrap {
+    background: var(--areia);
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ocre), var(--marrom));
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* Question */
+  .question-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    color: var(--ocre);
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--marrom-escuro);
+    margin-bottom: 28px;
+  }
+
+  /* Options */
+  .options-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(255,255,255,0.5);
+    border: 2px solid var(--areia);
+    border-radius: 4px;
+    padding: 14px 18px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    font-family: 'Crimson Text', serif;
+    font-size: 1.1rem;
+    color: var(--marrom-escuro);
+    line-height: 1.4;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--ocre);
+    background: rgba(200,129,58,0.08);
+    transform: translateX(4px);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    background: var(--areia);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--marrom);
+    transition: all 0.2s;
+  }
+
+  .option-btn.correct {
+    border-color: #4A7A4F;
+    background: rgba(74,122,79,0.1);
+    color: #2D5A32;
+  }
+
+  .option-btn.correct .option-letter {
+    background: #4A7A4F;
+    color: white;
+  }
+
+  .option-btn.wrong {
+    border-color: #A05050;
+    background: rgba(160,80,80,0.1);
+    color: #7A2E2E;
+  }
+
+  .option-btn.wrong .option-letter {
+    background: #A05050;
+    color: white;
+  }
+
+  .option-btn.reveal-correct {
+    border-color: #4A7A4F;
+    background: rgba(74,122,79,0.06);
+  }
+
+  /* Feedback box */
+  .feedback-box {
+    display: none;
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .feedback-box.correct-fb {
+    background: rgba(74,122,79,0.1);
+    border-left: 4px solid #4A7A4F;
+    color: #2D5A32;
+  }
+
+  .feedback-box.wrong-fb {
+    background: rgba(160,80,80,0.1);
+    border-left: 4px solid #A05050;
+    color: #7A2E2E;
+  }
+
+  .feedback-icon {
+    font-size: 1.3rem;
+    margin-right: 6px;
+  }
+
+  .feedback-explanation {
+    margin-top: 6px;
+    font-style: italic;
+    font-size: 1rem;
+    opacity: 0.85;
+  }
+
+  .next-btn-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  /* ── RESULT SCREEN ── */
+  .result-icon {
+    text-align: center;
+    font-size: 4rem;
+    margin-bottom: 12px;
+    animation: bounceIn 0.6s cubic-bezier(0.36,0.07,0.19,0.97);
+  }
+
+  @keyframes bounceIn {
+    0%   { transform: scale(0.3); opacity: 0; }
+    50%  { transform: scale(1.1); }
+    70%  { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 900;
+    color: var(--marrom-escuro);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .result-subtitle {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--marrom);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .score-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .score-circle {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    border: 5px solid var(--ocre);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200,129,58,0.08);
+  }
+
+  .score-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    color: var(--ocre);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--marrom);
+    letter-spacing: 0.5px;
+  }
+
+  .score-pct {
+    text-align: center;
+  }
+
+  .pct-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--marrom-escuro);
+    display: block;
+  }
+
+  .pct-label {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--marrom);
+  }
+
+  .result-message {
+    background: linear-gradient(135deg, rgba(200,129,58,0.1), rgba(122,79,45,0.08));
+    border: 1px solid var(--areia);
+    border-left: 4px solid var(--ocre);
+    border-radius: 4px;
+    padding: 18px 22px;
+    font-size: 1.15rem;
+    line-height: 1.65;
+    color: var(--marrom-escuro);
+    margin-bottom: 32px;
+    text-align: center;
+    font-style: italic;
+  }
+
+  .result-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── ORNAMENT ── */
+  .ornament {
+    text-align: center;
+    color: var(--areia);
+    font-size: 1.4rem;
+    letter-spacing: 8px;
+    margin: 20px 0;
+    user-select: none;
+  }
+
+  /* ── CACTUS SVG inline ── */
+  .cactus-deco {
+    position: absolute;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  .cactus-deco.left  { bottom: 20px; left: -10px; width: 90px; }
+  .cactus-deco.right { bottom: 10px; right: -10px; width: 70px; transform: scaleX(-1); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .card { padding: 32px 24px; }
+    .score-display { gap: 20px; }
+    .home-meta { gap: 14px; }
+    .btn-primary { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background Scene -->
+<div class="bg-scene">
+  <div class="sky"></div>
+  <div class="sun"></div>
+  <div class="ground"></div>
+  <div class="cracks"></div>
+
+  <!-- SVG Plants on horizon -->
+  <div class="plants">
+    <svg viewBox="0 0 1440 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet" style="position:absolute;bottom:0;left:0;width:100%;height:100%;">
+
+      <!-- Left big mandacaru -->
+      <g fill="#5A6B3A" opacity="0.55">
+        <rect x="60" y="160" width="18" height="180"/>
+        <rect x="40" y="250" width="50" height="14" rx="7"/>
+        <rect x="26" y="200" width="18" height="80" rx="9"/>
+        <rect x="78" y="220" width="18" height="100" rx="9"/>
+        <ellipse cx="26" cy="200" rx="9" ry="9"/>
+        <ellipse cx="44" cy="250" rx="9" ry="9"/>
+        <ellipse cx="96" cy="220" rx="9" ry="9"/>
+        <ellipse cx="69" cy="160" rx="9" ry="13"/>
+      </g>
+
+      <!-- Far left small cactus -->
+      <g fill="#4A5A2E" opacity="0.4">
+        <rect x="160" y="280" width="12" height="110"/>
+        <rect x="148" y="320" width="36" height="10" rx="5"/>
+        <rect x="137" y="310" width="12" height="50" rx="6"/>
+        <ellipse cx="160" cy="280" rx="7" ry="8"/>
+      </g>
+
+      <!-- Juazeiro left -->
+      <g fill="#5C7040" opacity="0.45">
+        <rect x="240" y="300" width="14" height="90"/>
+        <ellipse cx="247" cy="295" rx="55" ry="38"/>
+        <ellipse cx="230" cy="300" rx="40" ry="28"/>
+        <ellipse cx="270" cy="302" rx="38" ry="25"/>
+      </g>
+
+      <!-- Center mandacaru -->
+      <g fill="#6B7A42" opacity="0.38">
+        <rect x="720" y="120" width="22" height="240"/>
+        <rect x="694" y="220" width="62" height="16" rx="8"/>
+        <rect x="678" y="185" width="22" height="100" rx="11"/>
+        <rect x="738" y="200" width="22" height="120" rx="11"/>
+        <ellipse cx="689" cy="185" rx="11" ry="11"/>
+        <ellipse cx="711" cy="220" rx="11" ry="11"/>
+        <ellipse cx="760" cy="200" rx="11" ry="11"/>
+        <ellipse cx="731" cy="120" rx="11" ry="14"/>
+      </g>
+
+      <!-- Right juazeiro -->
+      <g fill="#4A5C35" opacity="0.45">
+        <rect x="1100" y="280" width="18" height="120"/>
+        <ellipse cx="1109" cy="272" rx="70" ry="48"/>
+        <ellipse cx="1080" cy="280" rx="50" ry="35"/>
+        <ellipse cx="1140" cy="278" rx="48" ry="32"/>
+      </g>
+
+      <!-- Far right cactus -->
+      <g fill="#5A6B3A" opacity="0.5">
+        <rect x="1320" y="200" width="16" height="160"/>
+        <rect x="1300" y="260" width="48" height="12" rx="6"/>
+        <rect x="1284" y="240" width="16" height="70" rx="8"/>
+        <rect x="1336" y="248" width="16" height="90" rx="8"/>
+        <ellipse cx="1292" cy="240" rx="8" ry="8"/>
+        <ellipse cx="1328" cy="200" rx="8" ry="10"/>
+        <ellipse cx="1352" cy="248" rx="8" ry="8"/>
+      </g>
+
+      <!-- Scattered dry grass / shrubs -->
+      <g fill="#8B7A3A" opacity="0.3">
+        <ellipse cx="400" cy="420" rx="35" ry="12"/>
+        <ellipse cx="550" cy="435" rx="28" ry="9"/>
+        <ellipse cx="870" cy="425" rx="40" ry="11"/>
+        <ellipse cx="1000" cy="430" rx="30" ry="10"/>
+        <ellipse cx="1220" cy="440" rx="25" ry="8"/>
+      </g>
+
+    </svg>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="wrapper">
+  <div class="card">
+
+    <!-- Cactus decorations on card -->
+    <svg class="cactus-deco left" viewBox="0 0 90 200" fill="var(--marrom)">
+      <rect x="30" y="40" width="14" height="130" rx="7"/>
+      <rect x="16" y="90" width="42" height="12" rx="6"/>
+      <rect x="4" y="72" width="14" height="65" rx="7"/>
+      <rect x="56" y="80" width="14" height="75" rx="7"/>
+    </svg>
+    <svg class="cactus-deco right" viewBox="0 0 90 200" fill="var(--marrom)">
+      <rect x="30" y="60" width="12" height="110" rx="6"/>
+      <rect x="18" y="100" width="36" height="10" rx="5"/>
+      <rect x="8" y="88" width="12" height="55" rx="6"/>
+      <rect x="46" y="94" width="12" height="65" rx="6"/>
+    </svg>
+
+    <!-- ═══════════ HOME SCREEN ═══════════ -->
+    <div id="screen-home" class="screen active">
+      <span class="home-badge">ATIVIDADE INTERATIVA</span>
+
+      <h1 class="home-title">
+        <em>Vidas</em><br>Secas
+      </h1>
+      <p class="home-author">Graciliano Ramos — 1938</p>
+
+      <p class="home-desc">
+        Uma família retirante, a seca implacável, a luta pela sobrevivência. Teste seus conhecimentos sobre uma das obras mais marcantes da literatura brasileira.
+      </p>
+
+      <div class="home-meta">
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          5 questões
+        </div>
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+          Múltipla escolha
+        </div>
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          Feedback imediato
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✦ ✦</div>
+
+      <button class="btn-primary" onclick="startQuiz()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Iniciar Quiz
+      </button>
+    </div>
+
+    <!-- ═══════════ QUIZ SCREEN ═══════════ -->
+    <div id="screen-quiz" class="screen">
+      <div class="quiz-header">
+        <span class="question-counter" id="q-counter">PERGUNTA 1 DE 5</span>
+        <span class="score-badge" id="score-live">ACERTOS: 0</span>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+
+      <div class="question-num" id="q-num">Questão 01</div>
+      <div class="question-text" id="q-text"></div>
+
+      <div class="options-grid" id="options-container"></div>
+
+      <div class="feedback-box" id="feedback-box">
+        <div id="feedback-main"></div>
+        <div class="feedback-explanation" id="feedback-exp"></div>
+      </div>
+
+      <div class="next-btn-wrap">
+        <button class="btn-primary" id="next-btn" style="display:none" onclick="nextQuestion()">
+          <span id="next-label">Próxima Pergunta</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════ RESULT SCREEN ═══════════ -->
+    <div id="screen-result" class="screen">
+      <div class="result-icon" id="result-icon">🌵</div>
+      <h2 class="result-title" id="result-title">Resultado Final</h2>
+      <p class="result-subtitle">Quiz — Vidas Secas | Graciliano Ramos</p>
+
+      <div class="divider">✦</div>
+
+      <div class="score-display">
+        <div class="score-circle">
+          <span class="score-number" id="res-score">0/5</span>
+          <span class="score-label">acertos</span>
+        </div>
+        <div class="score-pct">
+          <span class="pct-number" id="res-pct">0%</span>
+          <span class="pct-label">de aproveitamento</span>
+        </div>
+      </div>
+
+      <div class="result-message" id="result-message"></div>
+
+      <div class="result-actions">
+        <button class="btn-primary" onclick="restartQuiz()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          Refazer Quiz
+        </button>
+        <button class="btn-secondary" onclick="goHome()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          Início
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    text: "Quem é o protagonista da obra <em>Vidas Secas</em>?",
+    options: [
+      "Sinhá Vitória",
+      "Fabiano",
+      "O menino mais velho",
+      "o soldado amarelo"
+    ],
+    correct: 1,
+    feedback: {
+      right: "✔ Correto!",
+      wrong: "✘ Incorreto.",
+      explanation: "Fabiano é o protagonista: um vaqueiro rude e humilhado que tenta sobreviver com sua família em meio à seca do sertão nordestino. Embora de poucos recursos verbais, é ele quem sustenta e lidera a família."
+    }
+  },
+  {
+    text: "Qual é o principal problema enfrentado pela família ao longo da narrativa?",
+    options: [
+      "A falta de educação das crianças",
+      "O endividamento com o fazendeiro",
+      "A seca e a miséria que os obrigam a migrar",
+      "Os conflitos com o soldado amarelo"
+    ],
+    correct: 2,
+    feedback: {
+      right: "✔ Correto!",
+      wrong: "✘ Incorreto.",
+      explanation: "A seca é o grande antagonista invisível do romance. Ela determina toda a existência da família: as migrações, a fome, a humilhação e a impossibilidade de uma vida digna. Graciliano usa a seca como metáfora das condições sociais do Nordeste."
+    }
+  },
+  {
+    text: "Quem é Baleia e qual é o seu papel na obra?",
+    options: [
+      "Uma vaca leiteira que alimenta a família",
+      "A égua que Fabiano usa para trabalhar",
+      "A cachorra da família, símbolo de afeto e lealdade",
+      "Uma vizinha que ajuda Sinhá Vitória"
+    ],
+    correct: 2,
+    feedback: {
+      right: "✔ Correto!",
+      wrong: "✘ Incorreto.",
+      explanation: "Baleia é a cachorra da família e um dos personagens mais tocantes do romance. Ela representa o afeto e a humanidade que os personagens dificilmente expressam entre si. Seu capítulo, narrado por ela mesma, é um dos mais memoráveis da literatura brasileira."
+    }
+  },
+  {
+    text: "Qual é o sonho de Sinhá Vitória ao longo da narrativa?",
+    options: [
+      "Aprender a ler e escrever",
+      "Ter uma cama de couro como a do patrão",
+      "Comprar um pedaço de terra para a família",
+      "Ver os filhos estudarem na cidade"
+    ],
+    correct: 1,
+    feedback: {
+      right: "✔ Correto!",
+      wrong: "✘ Incorreto.",
+      explanation: "Sinhá Vitória sonha com uma cama de couro igual à do fazendeiro, em contraste com as varas e couros velhos onde dorme sua família. Esse sonho simples simboliza o desejo de dignidade e de uma vida melhor que a miséria lhes nega."
+    }
+  },
+  {
+    text: "Por que a família deixa a fazenda no final da história?",
+    options: [
+      "Fabiano briga com o fazendeiro e é expulso",
+      "A família decide ir para a cidade grande em busca de escola",
+      "A seca volta e o patrão dispensa Fabiano, forçando a nova migração",
+      "Baleia morre e a família perde a vontade de ficar"
+    ],
+    correct: 2,
+    feedback: {
+      right: "✔ Correto!",
+      wrong: "✘ Incorreto.",
+      explanation: "Com o retorno da seca e a dispensa dada pelo fazendeiro, a família é obrigada a partir novamente. A obra termina de forma circular: assim como começou em migração, termina com a família retirante indo em direção ao sul, em busca de uma vida menos árida — sem garantias."
+    }
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  currentQ = 0;
+  score = 0;
+  showScreen('screen-quiz');
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = QUESTIONS[currentQ];
+  answered = false;
+
+  // Header
+  document.getElementById('q-counter').textContent = `PERGUNTA ${currentQ + 1} DE ${QUESTIONS.length}`;
+  document.getElementById('score-live').textContent = `ACERTOS: ${score}`;
+
+  // Progress
+  const pct = (currentQ / QUESTIONS.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  // Question
+  document.getElementById('q-num').textContent = `Questão ${String(currentQ + 1).padStart(2,'0')}`;
+  document.getElementById('q-text').innerHTML = q.text;
+
+  // Options
+  const letters = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectOption(i);
+    container.appendChild(btn);
+  });
+
+  // Hide feedback & next
+  const fb = document.getElementById('feedback-box');
+  fb.style.display = 'none';
+  fb.className = 'feedback-box';
+  document.getElementById('next-btn').style.display = 'none';
+}
+
+function selectOption(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = QUESTIONS[currentQ];
+  const btns = document.querySelectorAll('.option-btn');
+  const isCorrect = idx === q.correct;
+
+  if (isCorrect) score++;
+
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add(isCorrect && i === idx ? 'correct' : 'reveal-correct');
+    if (i === idx && !isCorrect) btn.classList.add('wrong');
+  });
+
+  if (isCorrect) btns[idx].classList.remove('reveal-correct');
+  if (isCorrect) btns[idx].classList.add('correct');
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  fb.style.display = 'block';
+  fb.className = `feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
+  document.getElementById('feedback-main').innerHTML =
+    `<span class="feedback-icon">${isCorrect ? '✔' : '✘'}</span> ${isCorrect ? q.feedback.right : q.feedback.wrong}`;
+  document.getElementById('feedback-exp').textContent = q.feedback.explanation;
+
+  // Next button
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'inline-flex';
+  document.getElementById('next-label').textContent =
+    currentQ < QUESTIONS.length - 1 ? 'Próxima Pergunta' : 'Ver Resultado';
+
+  document.getElementById('score-live').textContent = `ACERTOS: ${score}`;
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ < QUESTIONS.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  showScreen('screen-result');
+
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  document.getElementById('res-score').textContent = `${score}/${QUESTIONS.length}`;
+  document.getElementById('res-pct').textContent = `${pct}%`;
+
+  let icon, title, msg;
+  if (score === 5) {
+    icon = '🌟'; title = 'Excelente!';
+    msg = 'Você domina a obra <em>Vidas Secas</em>. Conhecimento digno do próprio Graciliano Ramos!';
+  } else if (score === 4) {
+    icon = '🌵'; title = 'Ótimo desempenho!';
+    msg = 'Você conhece bem a obra. Apenas um detalhe escapou — revise-o e terá domínio total.';
+  } else if (score === 3) {
+    icon = '🌾'; title = 'Bom resultado!';
+    msg = 'Você tem uma boa base sobre <em>Vidas Secas</em>, mas ainda há pontos para revisar antes da avaliação.';
+  } else {
+    icon = '📖'; title = 'Continue estudando!';
+    msg = 'Vale a pena revisar a obra com atenção antes da avaliação. Cada capítulo guarda detalhes importantes.';
+  }
+
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-message').innerHTML = msg;
+
+  // Animate progress bar to 100% on result
+  document.getElementById('progress-bar').style.width = '100%';
+}
+
+function restartQuiz() { startQuiz(); }
+function goHome() { showScreen('screen-home'); }
+</script>
+</body>
+</html>
